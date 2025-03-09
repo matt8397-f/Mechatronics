@@ -1,1 +1,104 @@
-cool
+//right side
+const int in1 = 2;  
+const int in2 = 3;
+const int ENA = 10;
+//left side
+const int in3 = 4;
+const int in4 = 5;
+const int ENB = 9;
+
+const int buttonUp = 34;
+const int buttonDown = 36;
+const int buttonLeft = 38;
+const int buttonRight = 40;
+
+#include <Servo.h>  // Include Servo library
+
+// *** SERVO MOTOR SETUP *** //
+const int servoPin = 6;  // MG995 Servo signal pin
+const int buttonServoStart = 42; // Button to start spinning the servo
+const int buttonServoStop = 44;  // Button to stop the servo
+Servo mg995Servo; // Create a Servo object
+// *** END OF SERVO MOTOR SETUP *** //
+
+void setup() {
+    // Set motor control pins as OUTPUT
+    pinMode(in1, OUTPUT);
+    pinMode(in2, OUTPUT);
+    pinMode(in3, OUTPUT);
+    pinMode(in4, OUTPUT);
+    pinMode(ENB, OUTPUT);
+    pinMode(ENA, OUTPUT);
+
+    pinMode(buttonUp, INPUT);
+    pinMode(buttonDown, INPUT);
+    pinMode(buttonRight, INPUT);
+    pinMode(buttonLeft, INPUT);
+
+    // *** SERVO MOTOR SETUP *** //
+    pinMode(buttonServoStart, INPUT);
+    pinMode(buttonServoStop, INPUT);
+    mg995Servo.attach(servoPin);
+    mg995Servo.write(90); // Set servo to neutral position
+    // *** END OF SERVO MOTOR SETUP *** //
+}
+
+void loop() {
+    int buttonStateUp = digitalRead(buttonUp);
+    int buttonStateDown = digitalRead(buttonDown);
+    int buttonStateRight = digitalRead(buttonRight);
+    int buttonStateLeft = digitalRead(buttonLeft);
+
+    if (buttonStateUp == HIGH) {  // If buttonUp is pressed → Move forward
+        spinFoward(in1, in2);
+        spinFoward(in3, in4);
+    } else if (buttonStateDown == HIGH) {  // If buttonDown is pressed → Move backward
+        spinReverse(in1, in2);
+        spinReverse(in3, in4);
+    } else if(buttonStateRight == HIGH) { 
+        spinFoward(in3, in4);
+        spinReverse(in1, in2);
+    } else if(buttonStateLeft == HIGH){
+        spinFoward(in1, in2);
+        spinReverse(in3, in4);
+    } else{
+        stopMotors();
+    }
+
+    // *** SERVO MOTOR CONTROL *** //
+    int servoStartState = digitalRead(buttonServoStart);
+    int servoStopState = digitalRead(buttonServoStop);
+
+    if (servoStartState == HIGH) {
+        mg995Servo.write(180); // Start spinning
+    } else if (servoStopState == HIGH) {
+        mg995Servo.write(90); // Stop (neutral position)
+    }
+    // *** END OF SERVO MOTOR CONTROL *** //
+
+    delay(100);
+}
+
+// Move motor forward
+void spinFoward(int foward, int reverse) {
+    digitalWrite(foward, HIGH);
+    digitalWrite(reverse, LOW);
+    digitalWrite(ENA, 200);
+    digitalWrite(ENB, 200);
+}
+
+// Move motor backward
+void spinReverse(int foward, int reverse) {
+    digitalWrite(foward, LOW);
+    digitalWrite(reverse, HIGH);
+    digitalWrite(ENA, 200);
+    digitalWrite(ENB, 200);
+}
+
+// Stop motors
+void stopMotors() {
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, LOW);
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, LOW);
+}
