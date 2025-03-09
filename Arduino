@@ -1,1 +1,86 @@
-Added initial Arduino file
+//right side
+const int in1 = 2;  
+const int in2 = 3;
+const int ENA = 10;
+//left side
+const int in3 = 4;
+const int in4 = 5;
+const int ENB = 9;
+
+const int buttonUp = 34;
+const int buttonDown = 36;
+const int buttonLeft = 38;
+const int buttonRight = 40;
+
+
+
+void setup() {
+  // Set motor control pins as OUTPUT
+    pinMode(in1, OUTPUT);
+    pinMode(in2, OUTPUT);
+    pinMode(in3, OUTPUT);
+    pinMode(in4, OUTPUT);
+    pinMode(ENB, OUTPUT);
+    pinMode(ENA, OUTPUT);
+
+  pinMode(buttonUp, INPUT);
+  pinMode(buttonDown, INPUT);
+  pinMode(buttonRight, INPUT);
+  pinMode(buttonLeft, INPUT);
+
+}
+
+void loop() {
+
+
+   int buttonStateUp = digitalRead(buttonUp);
+   int buttonStateDown = digitalRead(buttonDown);
+   int buttonStateRight = digitalRead(buttonRight);
+   int buttonStateLeft = digitalRead(buttonLeft);
+
+  if (buttonStateUp == HIGH) {  // If buttonUp is pressed → Move forward
+    spinFoward(in1, in2);
+    spinFoward(in3, in4);
+  } else if (buttonStateDown == HIGH) {  // If buttonDown is pressed → Move backward
+    spinReverse(in1, in2);
+    spinReverse(in3, in4);
+  } else if(buttonStateRight == HIGH) { 
+       spinFoward(in3, in4);
+      spinReverse(in1, in2);
+  }
+    else if(buttonStateLeft == HIGH){
+      spinFoward(in1, in2);
+      spinReverse(in3, in4);
+           
+} else{
+        stopMotors();
+      }
+
+
+  delay(100);
+}
+
+// Move motor forward
+void spinFoward(int foward, int reverse) {
+  digitalWrite(foward, HIGH);
+  digitalWrite(reverse, LOW);
+  digitalWrite(ENA, 200);
+  digitalWrite(ENB, 200);
+}
+
+// Move motor backward
+void spinReverse(int foward, int reverse) {
+   digitalWrite(foward, LOW);
+   digitalWrite(reverse, HIGH);
+     digitalWrite(ENA, 200);
+     digitalWrite(ENB, 200);
+}
+
+
+// Stop motors
+void stopMotors() {
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
+}
